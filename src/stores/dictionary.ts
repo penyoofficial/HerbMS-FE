@@ -76,7 +76,7 @@ export const useDictionaryStore = defineStore("dictionary", () => {
   const itemDifferentiationColumnHeadsB = ref(
     new Map([
       ["唯一识别码", "id"],
-      ["条辩 ID", "itemDifferentionId"],
+      ["条辩 ID", "itemDifferentiationId"],
       ["处方 ID", "prescriptionId"],
       ["类型", "type"],
     ]),

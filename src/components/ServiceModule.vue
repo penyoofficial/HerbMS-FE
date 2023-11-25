@@ -22,6 +22,14 @@ watchEffect(() => {
 // 页内状态
 
 const isNewingFormPoped = ref(false);
+const searchBar = ref({
+  keyword: "",
+  isId: "",
+  reset() {
+    this.keyword = "";
+    this.isId = "";
+  },
+});
 const opType = ref("");
 const tableNames = ref<[string, string]>(["", ""]);
 const columnHeads = ref<Map<string, string>>(new Map());
@@ -38,12 +46,10 @@ watch(
 );
 
 watchEffect(() => {
+  searchBar.value.reset();
   tableNames.value = useDictionaryStore().getTableNames(
     props.serviceModule,
   ).value;
-});
-
-watchEffect(() => {
   columnHeads.value = useDictionaryStore().getColumnHeads(
     props.serviceModule,
     needQueryA.value,
@@ -127,14 +133,21 @@ function handleDeleteOP(id: number) {
         </button>
       </div>
       <form class="flex-right" @submit.prevent="handleSubmit">
-        <input type="text" name="keyword" placeholder="支持多关键字查询..." />
-        <input type="checkbox" name="isId" id="isId" />
+        <input
+          type="text"
+          name="keyword"
+          placeholder="支持多关键字查询..."
+          :value="searchBar.keyword"
+        />
+        <input type="checkbox" name="isId" id="isId" :value="searchBar.isId" />
         <label for="isId">ID 查询</label>
-        <button type="submit" @click="(needQueryA = true), (opType = 'query')">
-          查询{{ tableNames[0] }}
-        </button>
-        <button type="submit" @click="(needQueryA = false), (opType = 'query')">
-          查询{{ tableNames[1] }}
+        <button v-show="false" type="submit"></button>
+        <button
+          v-for="b in [0, 1]"
+          type="submit"
+          @click="(needQueryA = !b), (opType = 'query')"
+        >
+          查询{{ tableNames[b] }}
         </button>
       </form>
     </div>
