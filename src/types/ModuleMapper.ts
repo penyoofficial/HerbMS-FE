@@ -1,7 +1,7 @@
 /**
- * 业务模块枚举
+ * 模块映射器
  */
-export enum ServiceModuleEnum {
+export enum ModuleMapper {
   HERB = "herb",
   PRESCRIPTION = "prescription",
   ITEM_DIFFERENTIATION = "itemDifferentiation",

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, watch, watchEffect } from "vue";
-import axios from "axios";
-import type { ServiceModuleEnum } from "@/types/ServiceModuleEnum";
+import type { ModuleMapper } from "@/types/ModuleMapper";
 import { useDictionaryStore } from "@/stores/dictionary";
+import { NetworkIOEngine } from "@/apis/NetworkIOEngine";
 
 const props = defineProps<{
   /** 业务模块名 */
-  serviceModule: ServiceModuleEnum;
+  serviceModule: ModuleMapper;
 }>();
 
 // 桥梁状态
@@ -14,6 +14,7 @@ const props = defineProps<{
 const needQueryA = ref<boolean>(true);
 const affectedRows = ref<number>(-1);
 const objs = ref<any[]>([]);
+const subObjs = ref<any[]>([]);
 
 watchEffect(() => {
   if (affectedRows.value === 0) alert("操作失败！可能是因为不合法的请求参数。");
@@ -33,6 +34,7 @@ const searchBar = ref({
 const opType = ref("");
 const tableNames = ref<[string, string]>(["", ""]);
 const columnHeads = ref<Map<string, string>>(new Map());
+const subColumnHeads = ref<string[]>([]);
 const selectedRowValue = ref<(number | string)[]>([]);
 const selectedRowId = ref(-1);
 
@@ -54,6 +56,10 @@ watchEffect(() => {
     props.serviceModule,
     needQueryA.value,
   ).value;
+  subColumnHeads.value = useDictionaryStore().getSubColumnHeads(
+    props.serviceModule,
+    needQueryA.value,
+  );
 });
 
 /**
@@ -72,32 +78,25 @@ function getParams(e?: Event) {
   return params;
 }
 
-/**
- * 根据根 URI 和参数集获取不安全 URI。
- */
-function getUnsafeURI(rootURI: string, params: Map<string, unknown>) {
-  let uri = `${rootURI}?`;
-  params.forEach((v, k) => {
-    uri += `${k}=${v}&`;
-  });
-  return uri.slice(0, -1);
-}
-
-function handleSubmit(e?: Event) {
+async function handleSubmit(e?: Event) {
   objs.value = [];
+  subObjs.value = [];
   isNewingFormPoped.value = false;
-  axios
-    .get(
-      getUnsafeURI(
-        `http://localhost/herbms/${props.serviceModule}Servlet`,
-        getParams(e),
-      ),
-    )
-    .then((resp) => {
-      needQueryA.value = resp.data.needQueryA;
-      affectedRows.value = resp.data.affectedRows;
-      objs.value = resp.data.objs;
-    });
+  Promise.all([
+    NetworkIOEngine.requestServlet(
+      props.serviceModule,
+      getParams(e),
+    ) as Promise<NetworkIOEngine.MainDataPack>,
+    NetworkIOEngine.requestServlet(
+      props.serviceModule,
+      getParams(e),
+      "Specific",
+    ) as Promise<NetworkIOEngine.SpecificDataPack>,
+  ]).then((datas) => {
+    affectedRows.value = datas[0].affectedRows;
+    objs.value = datas[0].objs;
+    subObjs.value = datas[1].objs;
+  });
 }
 
 function handleNewOrCancelOP() {
@@ -178,16 +177,19 @@ function handleDeleteOP(id: number) {
       <thead>
         <tr>
           <th
-            v-for="ch in columnHeads"
-            :style="`min-width: ${ch[0].length}rem;`"
+            v-for="ch in Array.from(columnHeads.keys()).concat(subColumnHeads)"
+            :style="`min-width: ${ch.length}rem;`"
           >
-            {{ ch[0] }}
+            {{ ch }}
           </th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="o in objs">
+        <tr v-for="(o, i) in objs">
           <td v-for="col in o">{{ col }}</td>
+          <td v-if="subObjs.length > 0">
+            <div class="ps">{{ subObjs[i] || "无" }}</div>
+          </td>
           <td>
             <button @click="handleAlterOP(o.id)">改</button>
           </td>
@@ -221,5 +223,11 @@ function handleDeleteOP(id: number) {
       margin-right: 1rem;
     }
   }
+  & .result .ps {
+    width: 10rem;
+    max-height: 5rem;
+    overflow: auto;
+  }
 }
 </style>
+@/types/ModuleMapper

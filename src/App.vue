@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import ServiceModule from "./components/ServiceModule.vue";
-import { ServiceModuleEnum } from "./types/ServiceModuleEnum";
+import { ModuleMapper } from "./types/ModuleMapper";
+import Index from "./components/Index.vue";
+import ServiceModule from "./components/ServiceTemplate.vue";
 
-const menu = ref<[string, ServiceModuleEnum][]>([
-  ["中草药管理", ServiceModuleEnum.HERB],
-  ["经方管理", ServiceModuleEnum.PRESCRIPTION],
-  ["条辨管理", ServiceModuleEnum.ITEM_DIFFERENTIATION],
+type PageType = "" | ModuleMapper;
+
+const menu = ref<[string, PageType][]>([
+  ["首页", ""],
+  ["中草药管理", ModuleMapper.HERB],
+  ["经方管理", ModuleMapper.PRESCRIPTION],
+  ["条辨管理", ModuleMapper.ITEM_DIFFERENTIATION],
 ]);
 const view = ref(menu.value[0][1]);
 
@@ -21,7 +25,7 @@ function getTip() {
   return tipSet[Math.floor(Math.random() * tipSet.length)];
 }
 
-function handleChangeView(path: ServiceModuleEnum) {
+function handleChangeView(path: PageType) {
   view.value = path;
 }
 </script>
@@ -45,7 +49,8 @@ function handleChangeView(path: ServiceModuleEnum) {
         <li class="tip">小提示：{{ getTip() }}</li>
       </ul>
       <div class="view">
-        <service-module :service-module="view" />
+        <index v-if="view === ''" />
+        <service-module v-else :service-module="view" />
       </div>
     </div>
   </div>
@@ -110,3 +115,4 @@ function handleChangeView(path: ServiceModuleEnum) {
   }
 }
 </style>
+./types/ModuleMapper

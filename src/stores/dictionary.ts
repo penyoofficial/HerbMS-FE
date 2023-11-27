@@ -1,6 +1,8 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import { ServiceModuleEnum } from "@/types/ServiceModuleEnum";
+import { ModuleMapper } from "@/types/ModuleMapper";
+import { RuleEngine } from "@/apis/RuleEngine";
+import { TableMapper } from "@/types/TableMapper";
 
 export const useDictionaryStore = defineStore("dictionary", () => {
   const herbTableNames = ref<[string, string]>(["中草药", "心得"]);
@@ -13,18 +15,18 @@ export const useDictionaryStore = defineStore("dictionary", () => {
   /**
    * 获取指定表名组。
    */
-  function getTableNames(moduleName: ServiceModuleEnum) {
+  function getTableNames(moduleName: ModuleMapper) {
     switch (moduleName) {
-      case ServiceModuleEnum.HERB:
+      case ModuleMapper.HERB:
         return herbTableNames;
-      case ServiceModuleEnum.PRESCRIPTION:
+      case ModuleMapper.PRESCRIPTION:
         return prescriptionTableNames;
-      case ServiceModuleEnum.ITEM_DIFFERENTIATION:
+      case ModuleMapper.ITEM_DIFFERENTIATION:
         return itemDifferentiationTableNames;
     }
   }
 
-  const herbColumnHeadsA = ref(
+  const herbsColumnHeads = ref(
     new Map([
       ["唯一识别码", "id"],
       ["编号", "code"],
@@ -40,7 +42,7 @@ export const useDictionaryStore = defineStore("dictionary", () => {
       ["炮制方法", "processing"],
     ]),
   );
-  const herbColumnHeadsB = ref(
+  const experiencesColumnHeads = ref(
     new Map([
       ["唯一识别码", "id"],
       ["中草药 ID", "herbId"],
@@ -48,7 +50,7 @@ export const useDictionaryStore = defineStore("dictionary", () => {
       ["心得内容", "content"],
     ]),
   );
-  const prescriptionColumnHeadsA = ref(
+  const prescriptionInfosColumnHeads = ref(
     new Map([
       ["唯一识别码", "id"],
       ["名称", "name"],
@@ -56,7 +58,7 @@ export const useDictionaryStore = defineStore("dictionary", () => {
       ["解释", "description"],
     ]),
   );
-  const prescriptionColumnHeadsB = ref(
+  const prescriptionsColumnHeads = ref(
     new Map([
       ["唯一识别码", "id"],
       ["中药处方 ID", "prescriptionId"],
@@ -65,7 +67,7 @@ export const useDictionaryStore = defineStore("dictionary", () => {
       ["用法", "usage"],
     ]),
   );
-  const itemDifferentiationColumnHeadsA = ref(
+  const itemDifferentiationInfosColumnHeads = ref(
     new Map([
       ["唯一识别码", "id"],
       ["编号", "code"],
@@ -73,7 +75,7 @@ export const useDictionaryStore = defineStore("dictionary", () => {
       ["注释", "annotation"],
     ]),
   );
-  const itemDifferentiationColumnHeadsB = ref(
+  const itemDifferentiationsColumnHeads = ref(
     new Map([
       ["唯一识别码", "id"],
       ["条辩 ID", "itemDifferentiationId"],
@@ -85,18 +87,42 @@ export const useDictionaryStore = defineStore("dictionary", () => {
   /**
    * 获取指定列名组。
    */
-  function getColumnHeads(moduleName: ServiceModuleEnum, needQueryA: boolean) {
-    switch (moduleName) {
-      case ServiceModuleEnum.HERB:
-        return needQueryA ? herbColumnHeadsA : herbColumnHeadsB;
-      case ServiceModuleEnum.PRESCRIPTION:
-        return needQueryA ? prescriptionColumnHeadsA : prescriptionColumnHeadsB;
-      case ServiceModuleEnum.ITEM_DIFFERENTIATION:
-        return needQueryA
-          ? itemDifferentiationColumnHeadsA
-          : itemDifferentiationColumnHeadsB;
+  function getColumnHeads(moduleName: ModuleMapper, needQueryA: boolean) {
+    switch (RuleEngine.tableMapper(moduleName, needQueryA)) {
+      case TableMapper.HERBS:
+        return herbsColumnHeads;
+      case TableMapper.EXPERIENCES:
+        return experiencesColumnHeads;
+      case TableMapper.PRESCRIPTION_INFOS:
+        return prescriptionInfosColumnHeads;
+      case TableMapper.PRESCRIPTIONS:
+        return prescriptionsColumnHeads;
+      case TableMapper.ITEM_DIFFERENTIATION_INFOS:
+        return itemDifferentiationInfosColumnHeads;
+      case TableMapper.ITEM_DIFFERENTIATIONS:
+        return itemDifferentiationsColumnHeads;
     }
   }
 
-  return { getTableNames, getColumnHeads };
+  /**
+   * 获取指定副列名组。
+   */
+  function getSubColumnHeads(moduleName: ModuleMapper, needQueryA: boolean) {
+    switch (RuleEngine.tableMapper(moduleName, needQueryA)) {
+      case TableMapper.HERBS:
+        return ["用药心得"];
+      case TableMapper.EXPERIENCES:
+        return ["所涉中草药"];
+      case TableMapper.PRESCRIPTION_INFOS:
+        return ["相关条辨"];
+      case TableMapper.PRESCRIPTIONS:
+        return ["经方大略"];
+      case TableMapper.ITEM_DIFFERENTIATION_INFOS:
+        return ["相关经方"];
+      case TableMapper.ITEM_DIFFERENTIATIONS:
+        return [];
+    }
+  }
+
+  return { getTableNames, getColumnHeads, getSubColumnHeads };
 });
