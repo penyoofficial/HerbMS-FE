@@ -24,10 +24,10 @@ watchEffect(() => {
 const isNewingFormPoped = ref(false);
 const searchBar = ref({
   keyword: "",
-  isId: "",
+  isId: false,
   reset() {
     this.keyword = "";
-    this.isId = "";
+    this.isId = false;
   },
 });
 const opType = ref("");
@@ -137,9 +137,9 @@ function handleDeleteOP(id: number) {
           type="text"
           name="keyword"
           placeholder="支持多关键字查询..."
-          :value="searchBar.keyword"
+          v-model="searchBar.keyword"
         />
-        <input type="checkbox" name="isId" id="isId" :value="searchBar.isId" />
+        <input type="checkbox" name="isId" id="isId" v-model="searchBar.isId" />
         <label for="isId">ID 查询</label>
         <button v-show="false" type="submit"></button>
         <button
