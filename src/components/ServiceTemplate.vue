@@ -78,18 +78,20 @@ function getParams(e?: Event) {
   return params;
 }
 
-async function handleSubmit(e?: Event) {
+function handleSubmit(e?: Event) {
   objs.value = [];
   subObjs.value = [];
   isNewingFormPoped.value = false;
+
+  const params = getParams(e);
   Promise.all([
     NetworkIOEngine.requestServlet(
       props.serviceModule,
-      getParams(e),
+      params,
     ) as Promise<NetworkIOEngine.MainDataPack>,
     NetworkIOEngine.requestServlet(
       props.serviceModule,
-      getParams(e),
+      params,
       "Specific",
     ) as Promise<NetworkIOEngine.SpecificDataPack>,
   ]).then((datas) => {
@@ -206,7 +208,8 @@ function handleDeleteOP(id: number) {
 .shell {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: calc(100% - 2rem);
+  padding: 1rem 2rem;
   & .tool-bar {
     display: flex;
     & .flex-right {

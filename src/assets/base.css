@@ -10,9 +10,21 @@
   --c-text: #333;
 }
 
+:root.dark {
+  --c-background: #333;
+  --c-background-hover: #444;
+  --c-background-2: #444;
+  --c-background-2-hover: #555;
+
+  --c-text: #eee;
+}
+
 * {
   margin: 0;
   padding: 0;
+  transition:
+    background-color 0.5s,
+    color 0.5s;
 }
 
 button,
@@ -33,6 +45,10 @@ input[type="text"] {
   outline: 0;
   border-radius: 0.3rem;
   background: var(--c-background-2);
+  color: var(--c-text);
+}
+
+label {
   color: var(--c-text);
 }
 
@@ -92,6 +108,7 @@ table.result {
   overflow-x: auto;
   width: 100%;
   border-collapse: collapse;
+  color: var(--c-text);
 }
 
 .result > thead tr {

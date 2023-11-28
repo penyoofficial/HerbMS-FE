@@ -1,6 +1,6 @@
 {
   "name": "herbms",
-  "version": "0.3.0-INDEV",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "build": "run-p type-check build-only",
@@ -12,6 +12,8 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.202",
+    "lodash": "^4.17.21",
     "pinia": "^2.1.6",
     "vue": "^3.3.4",
     "vue-router": "^4.2.4"

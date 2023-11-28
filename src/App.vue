@@ -3,6 +3,9 @@ import { ref } from "vue";
 import { ModuleMapper } from "./types/ModuleMapper";
 import Index from "./components/Index.vue";
 import ServiceModule from "./components/ServiceTemplate.vue";
+import { useThemeStore } from "./stores/theme";
+
+useThemeStore().applyTheme();
 
 type PageType = "" | ModuleMapper;
 
@@ -34,7 +37,7 @@ function handleChangeView(path: PageType) {
   <div class="box">
     <div class="title-box">
       <h1 class="title">中药处方管理系统</h1>
-      <p class="subtitle">Based on Vue/Spring</p>
+      <p class="subtitle">Powered by Penyo</p>
     </div>
     <div class="content">
       <ul class="menu">
@@ -91,15 +94,16 @@ function handleChangeView(path: PageType) {
         align-items: center;
         height: 3rem;
         border-bottom: 1px solid var(--c-background-2);
+        color: var(--c-text);
         text-indent: 2rem;
-      }
-      & .fx.now {
-        background: linear-gradient(
-          to right,
-          var(--c-highlight),
-          var(--c-background)
-        );
-        color: var(--c-text-highlight);
+        &.now {
+          background: linear-gradient(
+            to right,
+            var(--c-highlight),
+            var(--c-background)
+          );
+          color: var(--c-text-highlight);
+        }
       }
       & .tip {
         padding: 2rem;
@@ -109,8 +113,7 @@ function handleChangeView(path: PageType) {
     }
     & .view {
       flex: 4;
-      padding: 1rem 2rem;
-      overflow: auto;
+      overflow: hidden;
     }
   }
 }
