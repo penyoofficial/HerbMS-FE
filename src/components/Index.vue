@@ -14,10 +14,23 @@ const time = ref(
   })(new Date()),
 );
 
-const timer = ref([false, false, false, false, false, false]);
+const timer = ref(
+  ((waves: number, lines: number) => {
+    const timer = [];
+    for (let i = 0; i < waves; i++)
+      timer.push({
+        display: false,
+        danmus: useDanmuStore().getDanmus(lines),
+      });
+    return timer;
+  })(6, 18),
+);
 
 timer.value.forEach((_, i) => {
-  setTimeout(() => (timer.value[i] = true), (8000 / timer.value.length) * i);
+  setTimeout(
+    () => (timer.value[i].display = true),
+    (8000 / timer.value.length) * i,
+  );
 });
 </script>
 
@@ -32,8 +45,8 @@ timer.value.forEach((_, i) => {
     <div class="danmu-pool">
       <span v-for="t in timer">
         <p
-          v-if="t"
-          v-for="(d, i) in useDanmuStore().getDanmus(18)"
+          v-if="t.display"
+          v-for="(d, i) in t.danmus"
           class="danmu"
           :style="`top: ${i * 1.25}rem; --speed: ${8 - i * 0.1}s; opacity: ${
             1 - i / 18
@@ -66,12 +79,13 @@ timer.value.forEach((_, i) => {
   }
   & .danmu-pool {
     position: relative;
-    & p {
+    & .danmu {
       position: absolute;
-      width: 18rem;
       color: var(--c-text);
+      white-space: nowrap;
       animation: danmu-action var(--speed) linear infinite;
       &:hover {
+        z-index: 999;
         color: var(--c-highlight);
         animation-play-state: paused;
       }

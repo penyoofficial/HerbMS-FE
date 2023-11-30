@@ -110,7 +110,7 @@ export const useDanmuStore = defineStore("danmu", () => {
    * 获取弹幕包。
    */
   function getDanmus(amount: number) {
-    return shuffle(danmuku.value).slice(0, amount);
+    return shuffle([...danmuku.value]).slice(0, amount);
   }
 
   return { getDanmus };
