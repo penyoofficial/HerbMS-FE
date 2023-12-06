@@ -12,7 +12,7 @@ type PageType = "" | ModuleMapper;
 const menu = ref<[string, PageType][]>([
   ["首页", ""],
   ["中草药管理", ModuleMapper.HERB],
-  ["经方管理", ModuleMapper.PRESCRIPTION],
+  ["处方管理", ModuleMapper.PRESCRIPTION],
   ["条辨管理", ModuleMapper.ITEM_DIFFERENTIATION],
 ]);
 const view = ref(menu.value[0][1]);

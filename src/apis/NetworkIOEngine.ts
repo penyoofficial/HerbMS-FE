@@ -1,5 +1,7 @@
 import axios from "axios";
+import { RuleEngine } from "./RuleEngine";
 import type { ModuleMapper } from "@/types/ModuleMapper";
+import type { TableMapper } from "@/types/TableMapper";
 
 /**
  * 网络 IO 引擎
@@ -28,18 +30,10 @@ export namespace NetworkIOEngine {
   }
 
   /**
-   * 主数据包
+   * 返回数据包
    */
-  export interface MainDataPack {
-    needQueryA: boolean;
+  export interface ReturnDataPack {
     affectedRows: number;
-    objs: any[];
-  }
-
-  /**
-   * 特别数据包
-   */
-  export interface SpecificDataPack {
     objs: any[];
   }
 
@@ -47,19 +41,28 @@ export namespace NetworkIOEngine {
    * 向目标 Servlet 请求。
    */
   export async function requestServlet(
-    serviceModule: ModuleMapper,
+    tm: TableMapper,
     params: Map<string, unknown>,
     servletType?: "Specific",
-  ): Promise<MainDataPack | SpecificDataPack> {
-    if (!servletType)
-      return (await request(
-        `http://localhost/herbms/${serviceModule}Servlet`,
-        params,
-      )) as MainDataPack;
-    else
-      return (await request(
-        `http://localhost/herbms/${serviceModule}Servlet${servletType}`,
-        params,
-      )) as SpecificDataPack;
+  ) {
+    return (await request(
+      `http://localhost/herbms/${tm}Servlet${servletType || ""}`,
+      params,
+    )) as ReturnDataPack;
+  }
+
+  /**
+   * 获得一组数据包。
+   */
+  export function getDatas(
+    serviceModule: ModuleMapper,
+    needQueryA: boolean,
+    params: Map<string, unknown>,
+  ) {
+    const tm = RuleEngine.tableMapper(serviceModule, needQueryA);
+    return Promise.all([
+      requestServlet(tm, params),
+      requestServlet(tm, params, "Specific"),
+    ]);
   }
 }

@@ -66,10 +66,7 @@ watchEffect(() => {
  * 获取参数集。
  */
 function getParams(e?: Event) {
-  const params = new Map<string, unknown>([
-    ["needQueryA", needQueryA.value],
-    ["opType", opType.value],
-  ]);
+  const params = new Map<string, unknown>([["opType", opType.value]]);
   if (selectedRowId.value >= 0) params.set("id", selectedRowId.value);
   if (e)
     new FormData(e.target as HTMLFormElement).forEach((v, k) => {
@@ -84,21 +81,13 @@ function handleSubmit(e?: Event) {
   isNewingFormPoped.value = false;
 
   const params = getParams(e);
-  Promise.all([
-    NetworkIOEngine.requestServlet(
-      props.serviceModule,
-      params,
-    ) as Promise<NetworkIOEngine.MainDataPack>,
-    NetworkIOEngine.requestServlet(
-      props.serviceModule,
-      params,
-      "Specific",
-    ) as Promise<NetworkIOEngine.SpecificDataPack>,
-  ]).then((datas) => {
-    affectedRows.value = datas[0].affectedRows;
-    objs.value = datas[0].objs;
-    subObjs.value = datas[1].objs;
-  });
+  NetworkIOEngine.getDatas(props.serviceModule, needQueryA.value, params).then(
+    (datas) => {
+      affectedRows.value = datas[0].affectedRows;
+      objs.value = datas[0].objs;
+      subObjs.value = datas[1].objs;
+    },
+  );
 }
 
 function handleNewOrCancelOP() {

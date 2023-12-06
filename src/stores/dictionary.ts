@@ -6,7 +6,7 @@ import { TableMapper } from "@/types/TableMapper";
 
 export const useDictionaryStore = defineStore("dictionary", () => {
   const herbTableNames = ref<[string, string]>(["中草药", "心得"]);
-  const prescriptionTableNames = ref<[string, string]>(["经方概要", "经方"]);
+  const prescriptionTableNames = ref<[string, string]>(["处方概要", "处方"]);
   const itemDifferentiationTableNames = ref<[string, string]>([
     "条辨概要",
     "条辨",
@@ -61,8 +61,8 @@ export const useDictionaryStore = defineStore("dictionary", () => {
   const prescriptionsColumnHeads = ref(
     new Map([
       ["唯一识别码", "id"],
-      ["中药处方 ID", "prescriptionId"],
-      ["中药 ID", "herbId"],
+      ["中草药处方 ID", "prescriptionId"],
+      ["中草药 ID", "herbId"],
       ["用量", "dosage"],
       ["用法", "usage"],
     ]),
@@ -116,9 +116,9 @@ export const useDictionaryStore = defineStore("dictionary", () => {
       case TableMapper.PRESCRIPTION_INFOS:
         return ["相关条辨"];
       case TableMapper.PRESCRIPTIONS:
-        return ["经方大略"];
+        return ["处方大略"];
       case TableMapper.ITEM_DIFFERENTIATION_INFOS:
-        return ["相关经方"];
+        return ["相关处方"];
       case TableMapper.ITEM_DIFFERENTIATIONS:
         return [];
     }
