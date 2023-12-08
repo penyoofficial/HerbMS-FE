@@ -11,12 +11,13 @@ export namespace NetworkIOEngine {
    * 根据根 URI 和参数集获取不安全 URI。
    */
   export function getUnsafeURI(rootURI: string, params?: Map<string, unknown>) {
-    let uri = `${rootURI}?`;
+    let paramsStr = "?";
     if (params)
       params.forEach((v, k) => {
-        uri += `${k}=${v}&`;
+        if (k && v) paramsStr += `${k}=${v}&`;
       });
-    return uri.slice(0, -1);
+    paramsStr = paramsStr.slice(0, -1);
+    return rootURI + paramsStr;
   }
 
   /**
@@ -43,10 +44,12 @@ export namespace NetworkIOEngine {
   export async function requestServlet(
     tm: TableMapper,
     params: Map<string, unknown>,
-    servletType?: "Specific",
+    servletType?: "specific",
   ) {
     return (await request(
-      `http://localhost/herbms/${tm}Servlet${servletType || ""}`,
+      `http://localhost/herbms/use-${tm}${
+        servletType ? "-" + servletType : ""
+      }`,
       params,
     )) as ReturnDataPack;
   }
@@ -62,7 +65,7 @@ export namespace NetworkIOEngine {
     const tm = RuleEngine.tableMapper(serviceModule, needQueryA);
     return Promise.all([
       requestServlet(tm, params),
-      requestServlet(tm, params, "Specific"),
+      requestServlet(tm, params, "specific"),
     ]);
   }
 }

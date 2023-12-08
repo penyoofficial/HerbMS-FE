@@ -66,7 +66,9 @@ watchEffect(() => {
  * 获取参数集。
  */
 function getParams(e?: Event) {
-  const params = new Map<string, unknown>([["opType", opType.value]]);
+  const params = new Map<string, unknown>([
+    ["opType", opType.value || "query"],
+  ]);
   if (selectedRowId.value >= 0) params.set("id", selectedRowId.value);
   if (e)
     new FormData(e.target as HTMLFormElement).forEach((v, k) => {
