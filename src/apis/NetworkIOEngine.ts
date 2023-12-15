@@ -47,7 +47,7 @@ export namespace NetworkIOEngine {
     servletType?: "specific",
   ) {
     return (await request(
-      `http://localhost/herbms/use-${tm}${
+      `http://localhost:1919/herbms/use-${tm}${
         servletType ? "-" + servletType : ""
       }`,
       params,
