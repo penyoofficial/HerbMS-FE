@@ -1,0 +1,143 @@
+:root {
+  --c-highlight: #5cb87a;
+  --c-text-highlight: #fff;
+
+  --c-background: #fff;
+  --c-background-hover: #eee;
+  --c-background-2: #eee;
+  --c-background-2-hover: #ddd;
+
+  --c-text: #333;
+}
+
+:root.dark {
+  --c-background: #333;
+  --c-background-hover: #444;
+  --c-background-2: #444;
+  --c-background-2-hover: #555;
+
+  --c-text: #eee;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  transition:
+    background-color 0.5s,
+    color 0.5s;
+}
+
+.buttons {
+  & > * {
+    margin-right: 0.8rem;
+  }
+
+  & > *:last-of-type {
+    margin: 0;
+  }
+}
+
+button,
+input[type="submit"],
+input[type="button"] {
+  padding: 0.5rem 1rem;
+  border: 0;
+  outline: 0;
+  border-radius: 0.3rem;
+  background: var(--c-highlight);
+  color: var(--c-text-highlight);
+}
+
+input[type="text"] {
+  width: 14rem;
+  height: 2.2rem;
+  padding: 0 1.2rem;
+  border: 0;
+  outline: 0;
+  border-radius: 0.3rem;
+  background: var(--c-background-2);
+  color: var(--c-text);
+}
+
+label {
+  color: var(--c-text);
+}
+
+::selection {
+  background: var(--c-highlight);
+  color: var(--c-text-highlight);
+}
+
+.flex-left,
+.flex-right {
+  display: flex;
+  flex: 1;
+  align-items: center;
+}
+
+.flex-left {
+  justify-content: flex-start;
+
+  & > * {
+    margin-right: 0.8rem;
+  }
+}
+
+.flex-right {
+  justify-content: flex-end;
+
+  & > * {
+    margin-left: 0.8rem;
+  }
+}
+
+div.line {
+  height: 0.1rem;
+  margin: 1rem 0;
+  background: var(--c-background-2);
+}
+
+dialog {
+  position: fixed;
+  width: 42vw;
+  height: 80vh;
+  left: calc(29vw - 2rem);
+  top: calc(10vh - 1.5rem);
+  padding: 1.5rem 2rem;
+  box-shadow: 0 0.1rem 3px 3px rgba(0, 0, 0, 0.1);
+  border: 0;
+  border-radius: 0.3rem;
+  background: var(--c-background);
+  overflow: auto;
+}
+
+table.result {
+  display: block;
+  overflow-x: auto;
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--c-text);
+}
+
+.result > thead tr {
+  background: var(--c-highlight);
+  color: var(--c-text-highlight);
+}
+
+.result > thead th {
+  padding: 0.8rem 2rem;
+}
+
+.result > tbody tr {
+  background: var(--c-background-2);
+  transition: background-color 0.5s;
+}
+
+.result > tbody tr:hover {
+  background: var(--c-background-2-hover);
+}
+
+.result > tbody td {
+  padding: 0.2rem;
+  text-align: center;
+}
